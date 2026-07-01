@@ -1,0 +1,109 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+  
+  --color-dark-bg: #0F1113;
+  --color-dark-card: #121417;
+  --color-dark-border: #2A2D31;
+  --color-discord-bg: #1E2023;
+  --color-discord-sidebar: #121417;
+  --color-discord-chat: #1E2023;
+  --color-brand-sidebar: #08090A;
+  --color-profit: #43B581;
+  --color-loss: #F04747;
+  --color-accent: #5865F2;
+}
+
+html, body, #root {
+  height: 100%;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+}
+
+body {
+  font-family: var(--font-sans);
+  background-color: #0F1113;
+  color: #E0E0E0;
+}
+
+/* Scrollbar customization */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #08090A;
+}
+::-webkit-scrollbar-thumb {
+  background: #2A2D31;
+  border-radius: 99px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #3F4147;
+}
+
+/* Voice Waveform Animation */
+@keyframes voiceWave {
+  0%, 100% { height: 4px; }
+  50% { height: 16px; }
+}
+.voice-bar {
+  animation: voiceWave 0.8s ease-in-out infinite;
+}
+.voice-bar:nth-child(2) { animation-delay: 0.15s; }
+.voice-bar:nth-child(3) { animation-delay: 0.3s; }
+.voice-bar:nth-child(4) { animation-delay: 0.45s; }
+
+/* Premium Visual Enhancements */
+.glass-panel {
+  background: #1E2023;
+  border: 1px solid #2A2D31;
+  box-shadow: 0 4px 20px 0 rgba(0, 0, 0, 0.5);
+}
+
+.glass-card-hover {
+  transition: all 0.2s ease-in-out;
+}
+.glass-card-hover:hover {
+  transform: translateY(-2px);
+  border-color: #3F4147;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.7);
+  background: #24272C;
+}
+
+/* Ambient Background Glows */
+.ambient-glow-1 {
+  background: radial-gradient(circle, rgba(88, 101, 242, 0.08) 0%, rgba(88, 101, 242, 0) 70%);
+  pointer-events: none;
+}
+.ambient-glow-2 {
+  background: radial-gradient(circle, rgba(240, 71, 71, 0.05) 0%, rgba(240, 71, 71, 0) 70%);
+  pointer-events: none;
+}
+
+/* Live Ticker Tape Animations */
+@keyframes scrollTicker {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+.ticker-wrap {
+  overflow: hidden;
+  background: #08090A;
+  border-bottom: 1px solid #2A2D31;
+  white-space: nowrap;
+}
+.ticker-inner {
+  display: inline-block;
+  animation: scrollTicker 35s linear infinite;
+}
+.ticker-item {
+  display: inline-block;
+  padding: 0 2rem;
+  font-size: 11px;
+  font-weight: 700;
+}

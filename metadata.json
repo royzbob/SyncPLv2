@@ -1,0 +1,6 @@
+{
+  "name": "SyncPL Trading Dashboard",
+  "description": "Sync portfolio metrics, trade ledger logs, and real-time chat/voice rooms across multiple devices.",
+  "requestFramePermissions": ["microphone"],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

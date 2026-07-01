@@ -1,0 +1,140 @@
+{
+  "entities": {
+    "UserProfile": {
+      "title": "UserProfile",
+      "description": "User profile settings and associated rooms",
+      "type": "object",
+      "properties": {
+        "username": { "type": "string" },
+        "avatarColor": { "type": "string" },
+        "avatarType": { "type": "string" },
+        "avatarVal": { "type": "string" },
+        "groupIds": { "type": "array" },
+        "activeGroupId": { "type": "string" }
+      },
+      "required": ["username", "avatarColor", "avatarType", "avatarVal", "groupIds", "activeGroupId"]
+    },
+    "Room": {
+      "title": "Room",
+      "description": "Workspace synchronization room",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "creatorId": { "type": "string" },
+        "creatorName": { "type": "string" },
+        "moderators": { "type": "array" },
+        "createdAt": { "type": "string" }
+      },
+      "required": ["id", "creatorId", "creatorName", "moderators", "createdAt"]
+    },
+    "Channel": {
+      "title": "Channel",
+      "description": "Trading channel inside a workspace room",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "type": { "type": "string" },
+        "groupId": { "type": "string" },
+        "creatorId": { "type": "string" },
+        "createdAt": { "type": "string" }
+      },
+      "required": ["id", "name", "type", "groupId", "creatorId", "createdAt"]
+    },
+    "ChatMessage": {
+      "title": "ChatMessage",
+      "description": "Message posted within a channel",
+      "type": "object",
+      "properties": {
+        "username": { "type": "string" },
+        "text": { "type": "string" },
+        "timestamp": { "type": "string" },
+        "groupId": { "type": "string" },
+        "channelName": { "type": "string" },
+        "avatarVal": { "type": "string" }
+      },
+      "required": ["username", "text", "timestamp", "groupId", "channelName", "avatarVal"]
+    },
+    "VoiceUser": {
+      "title": "VoiceUser",
+      "description": "Active participant inside a voice channel",
+      "type": "object",
+      "properties": {
+        "username": { "type": "string" },
+        "groupId": { "type": "string" },
+        "channelName": { "type": "string" },
+        "joinedAt": { "type": "string" }
+      },
+      "required": ["username", "groupId", "channelName", "joinedAt"]
+    },
+    "PnlLog": {
+      "title": "PnlLog",
+      "description": "Verified P&L ledger record",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string" },
+        "username": { "type": "string" },
+        "groupId": { "type": "string" },
+        "amount": { "type": "number" },
+        "date": { "type": "string" },
+        "time": { "type": "string" },
+        "asset": { "type": "string" },
+        "strategy": { "type": "string" },
+        "notes": { "type": "string" }
+      },
+      "required": ["userId", "username", "groupId", "amount", "date", "time", "asset", "strategy"]
+    },
+    "LiveTrade": {
+      "title": "LiveTrade",
+      "description": "A live trade with Take Profit and Stop Loss tracking",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string" },
+        "username": { "type": "string" },
+        "groupId": { "type": "string" },
+        "asset": { "type": "string" },
+        "direction": { "type": "string", "enum": ["long", "short"] },
+        "entryPrice": { "type": "number" },
+        "tp": { "type": "number" },
+        "sl": { "type": "number" },
+        "currentPrice": { "type": "number" },
+        "status": { "type": "string", "enum": ["open", "closed"] },
+        "outcome": { "type": "string", "enum": ["TP", "SL", "manual", ""] },
+        "profitAmount": { "type": "number" },
+        "notes": { "type": "string" },
+        "timestamp": { "type": "string" }
+      },
+      "required": ["userId", "username", "groupId", "asset", "direction", "entryPrice", "tp", "sl", "currentPrice", "status", "timestamp"]
+    }
+  },
+  "firestore": {
+    "users/{userId}/profile/info": {
+      "schema": "UserProfile",
+      "description": "Profile settings of the user"
+    },
+    "rooms/{roomId}": {
+      "schema": "Room",
+      "description": "Shared room definitions"
+    },
+    "channels/{channelId}": {
+      "schema": "Channel",
+      "description": "Room-specific chat channels"
+    },
+    "chat_messages/{messageId}": {
+      "schema": "ChatMessage",
+      "description": "Real-time room messaging history"
+    },
+    "voice_users/{userId}": {
+      "schema": "VoiceUser",
+      "description": "Active voice channel connections"
+    },
+    "pnl_logs/{logId}": {
+      "schema": "PnlLog",
+      "description": "P&L Ledger log entry documents"
+    },
+    "live_trades/{tradeId}": {
+      "schema": "LiveTrade",
+      "description": "Active/open and closed live trade tracking records"
+    }
+  }
+}

@@ -1,0 +1,53 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Helper functions
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    // Profiles
+    match /users/{userId}/profile/info {
+      allow read, write: if isSignedIn();
+    }
+
+    // Users (base collection query/read)
+    match /users/{userId} {
+      allow read, write: if isSignedIn();
+    }
+
+    // Workspace Rooms
+    match /rooms/{roomId} {
+      allow read, write: if isSignedIn();
+    }
+
+    // Channels
+    match /channels/{channelId} {
+      allow read, write: if isSignedIn();
+    }
+
+    // Chat Messages
+    match /chat_messages/{messageId} {
+      allow read, write: if isSignedIn();
+    }
+
+    // Voice Users
+    match /voice_users/{userId} {
+      allow read, write: if isSignedIn();
+    }
+
+    // P&L Logs
+    match /pnl_logs/{logId} {
+      allow read, create: if isSignedIn();
+      allow update, delete: if isSignedIn() && (
+        resource.data.userId == request.auth.uid || 
+        !('userId' in resource.data)
+      );
+    }
+
+    // Live Trades
+    match /live_trades/{tradeId} {
+      allow read, write: if isSignedIn();
+    }
+  }
+}

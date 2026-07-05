@@ -20,6 +20,38 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Detect Project Path
+        id: detect
+        shell: bash
+        run: |
+          if [ -f "src-tauri/Cargo.toml" ]; then
+            echo "Found Tauri project at root"
+            echo "project_path=." >> $GITHUB_OUTPUT
+            echo "npm_dir=." >> $GITHUB_OUTPUT
+          elif [ -f "bitpulse-v17-desktop/src-tauri/Cargo.toml" ]; then
+            echo "Found Tauri project in bitpulse-v17-desktop"
+            echo "project_path=bitpulse-v17-desktop" >> $GITHUB_OUTPUT
+            echo "npm_dir=bitpulse-v17-desktop" >> $GITHUB_OUTPUT
+          elif [ -f "syncpl-trading-dashboard/src-tauri/Cargo.toml" ]; then
+            echo "Found Tauri project in syncpl-trading-dashboard"
+            echo "project_path=syncpl-trading-dashboard" >> $GITHUB_OUTPUT
+            echo "npm_dir=syncpl-trading-dashboard" >> $GITHUB_OUTPUT
+          else
+            # Search for any subdirectory containing src-tauri/Cargo.toml
+            found_path=$(find . -maxdepth 3 -name "Cargo.toml" | grep "src-tauri" | head -n 1)
+            if [ ! -z "$found_path" ]; then
+              # Extract directory path before /src-tauri/Cargo.toml
+              dir_path=$(echo "$found_path" | sed 's|/src-tauri/Cargo.toml||' | sed 's|^\./||')
+              echo "Found Tauri project in auto-detected path: $dir_path"
+              echo "project_path=$dir_path" >> $GITHUB_OUTPUT
+              echo "npm_dir=$dir_path" >> $GITHUB_OUTPUT
+            else
+              echo "Could not auto-detect Tauri project! Defaulting to root."
+              echo "project_path=." >> $GITHUB_OUTPUT
+              echo "npm_dir=." >> $GITHUB_OUTPUT
+            fi
+          fi
+
       - name: setup node
         uses: actions/setup-node@v4
         with:
@@ -29,7 +61,10 @@ jobs:
         uses: dtolnay/rust-toolchain@stable
 
       - name: install frontend dependencies
-        run: npm install
+        shell: bash
+        run: |
+          cd ${{ steps.detect.outputs.npm_dir }}
+          npm install
 
       - name: Build and Publish
         uses: tauri-apps/tauri-action@v0
@@ -41,4 +76,5 @@ jobs:
           releaseBody: 'See the assets below to download the latest version for Windows.'
           releaseDraft: false
           prerelease: false
+          projectPath: ${{ steps.detect.outputs.project_path }}
           args: ${{ matrix.args }}

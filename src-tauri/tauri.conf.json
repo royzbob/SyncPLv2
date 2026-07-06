@@ -35,7 +35,7 @@
     ],
     "windows": {
       "nsis": {
-        "installerMode": "currentUser"
+        "installerMode": "perUser"
       }
     }
   }

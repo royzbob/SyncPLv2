@@ -741,6 +741,51 @@ export default function SettingsView({
               Establish New Room Code
             </button>
           </div>
+
+          {/* App Version & Updates */}
+          <div className="glass-panel p-5 rounded space-y-4 border border-[#2A2D31] bg-[#1E2023]/45">
+            <h4 className="font-bold text-gray-100 text-sm flex items-center gap-2">
+              <RefreshCw className="text-[#5865F2] w-4.5 h-4.5" /> System & App Updates
+            </h4>
+            <p className="text-[11px] text-[#8E9297] leading-relaxed">
+              Verify your desktop environment or check for new builds of the SyncPL Trading Application.
+            </p>
+
+            <div className="flex items-center justify-between px-3.5 py-2.5 bg-[#121417]/60 border border-[#2A2D31]/50 rounded-lg">
+              <span className="text-xs text-neutral-400 font-medium">App Build</span>
+              <span className="text-xs font-mono font-bold text-indigo-400 bg-indigo-500/10 border border-indigo-500/20 px-2 py-0.5 rounded">v1.0.4 (Desktop)</span>
+            </div>
+
+            <button
+              onClick={async () => {
+                const isTauri = typeof window !== "undefined" && (
+                  (window as any).__TAURI__ || 
+                  window.location.protocol === "tauri:" || 
+                  window.location.protocol === "asset:" ||
+                  window.location.hostname === "tauri.localhost" ||
+                  window.location.hostname === ""
+                );
+                if (!isTauri) {
+                  alert("Manually checking for updates is only available in the Desktop client. You are currently viewing the Web version.");
+                  return;
+                }
+                try {
+                  const { check } = await import("@tauri-apps/plugin-updater");
+                  const update = await check();
+                  if (update && update.available) {
+                    alert(`New update found: v${update.version}! Relaunch the application or use the notification banner to install.`);
+                  } else {
+                    alert("Your application is fully up-to-date! (Version 1.0.4)");
+                  }
+                } catch (err: any) {
+                  alert(`Update check failed: ${err.message || err}`);
+                }
+              }}
+              className="w-full bg-[#1E2023] border border-[#2A2D31] hover:bg-[#24272C] text-gray-200 font-bold text-xs py-2.5 px-4 rounded transition flex items-center justify-center gap-1.5 cursor-pointer"
+            >
+              <RefreshCw className="w-3.5 h-3.5" /> Check for Updates Now
+            </button>
+          </div>
         </div>
 
         {/* Channels Administration */}
@@ -1085,7 +1130,7 @@ export default function SettingsView({
                   )}
                 </h4>
                 <p className="text-xs text-[#8E9297] mt-0.5">
-                  Start your 30-day free trial or manage your high-performance SyncPL Premium workspace subscription.
+                  Start your 3-day free trial or manage your high-performance SyncPL Premium workspace subscription.
                 </p>
               </div>
             </div>
@@ -1118,7 +1163,7 @@ export default function SettingsView({
                   <span className="text-xs text-[#8E9297]">/ month</span>
                 </div>
                 <p className="text-[10px] text-emerald-400 font-extrabold uppercase tracking-widest flex items-center gap-1">
-                  <Sparkles className="w-3 h-3 animate-pulse" /> 1-Month (30-Day) Free Trial Included!
+                  <Sparkles className="w-3 h-3 animate-pulse" /> 3-Day Free Trial Included!
                 </p>
               </div>
 
@@ -1167,7 +1212,7 @@ export default function SettingsView({
                   onClick={onSubscribe}
                   className="w-full text-center py-2.5 rounded-lg text-xs font-black bg-indigo-500 hover:bg-indigo-600 text-white shadow-lg shadow-indigo-500/10 transition cursor-pointer"
                 >
-                  Start 30-Day Free Trial
+                  Start 3-Day Free Trial
                 </button>
               )}
             </div>

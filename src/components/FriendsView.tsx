@@ -1093,7 +1093,7 @@ export default function FriendsView({
                     <div className="space-y-1 font-mono">
                       <div className="text-2xl font-black text-white">$25.00<span className="text-xs text-gray-500"> /mo</span></div>
                       <div className="text-[10px] text-emerald-400 font-extrabold uppercase tracking-widest flex items-center gap-1">
-                        <Sparkles className="w-3.5 h-3.5 text-emerald-400 animate-pulse" /> First Month Free (30-Day Trial)
+                        <Sparkles className="w-3.5 h-3.5 text-emerald-400 animate-pulse" /> 3-Day Free Trial Included!
                       </div>
                     </div>
 

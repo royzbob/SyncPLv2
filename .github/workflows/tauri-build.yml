@@ -69,17 +69,12 @@ jobs:
           cd ${{ steps.detect.outputs.npm_dir }}
           npm install
 
-      - name: Regenerate and fix Tauri icons
-        shell: bash
-        run: |
-          cd ${{ steps.detect.outputs.npm_dir }}
-          node fix_icon.js
-
       - name: Build and Publish
         uses: tauri-apps/tauri-action@v0
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
+          packageManager: npm
           tagName: v__VERSION__ # Auto-replaced with version in tauri.conf.json
           releaseName: 'SyncPL Trading Dashboard v__VERSION__'
           releaseBody: 'See the assets below to download the latest version for macOS and Windows.'

@@ -45,7 +45,7 @@
       "endpoints": [
         "https://raw.githubusercontent.com/1NathanDrew6/syncpl-trading-dashboard/main/updater.json"
       ],
-      "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IDM4QjMwOURBNEUxODBFMzMKUldRekRoaE8yZ216T0piZ1ZWd2dBZHlrbFFQdW5BTzIwVmVlN0J4djJtUXdzYi9IYkM1cEExVy8K"
+      "pubkey": "dW51c2VkX3B1YmxpY19rZXlfX3BsZWFzZV9yZXBsYWNlX3dpdGhfcmVhbA=="
     }
   }
 }

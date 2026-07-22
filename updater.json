@@ -1,0 +1,19 @@
+{
+  "version": "1.0.4",
+  "notes": "SyncPL Trading Dashboard v1.0.4 Release!",
+  "pub_date": "2026-07-22T16:20:00Z",
+  "platforms": {
+    "windows-x86_64": {
+      "signature": "REPLACE_WITH_WINDOWS_SIGNATURE_FROM_SIG_FILE",
+      "url": "https://github.com/1NathanDrew6/syncpl-trading-dashboard/releases/download/v1.0.4/SyncPL_Trading_1.0.4_x64-setup.nsis.zip"
+    },
+    "darwin-x86_64": {
+      "signature": "REPLACE_WITH_MACOS_X64_SIGNATURE_FROM_SIG_FILE",
+      "url": "https://github.com/1NathanDrew6/syncpl-trading-dashboard/releases/download/v1.0.4/SyncPL_Trading_1.0.4_x64.app.tar.gz"
+    },
+    "darwin-aarch64": {
+      "signature": "REPLACE_WITH_MACOS_ARM64_SIGNATURE_FROM_SIG_FILE",
+      "url": "https://github.com/1NathanDrew6/syncpl-trading-dashboard/releases/download/v1.0.4/SyncPL_Trading_1.0.4_aarch64.app.tar.gz"
+    }
+  }
+}

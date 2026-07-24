@@ -132,9 +132,25 @@ export default function SettingsView({
 
   // Mic hardware testing state
   const [audioDevices, setAudioDevices] = useState<MediaDeviceInfo[]>([]);
-  const [selectedMicId, setSelectedMicId] = useState("");
+  const [selectedMicId, setSelectedMicId] = useState<string>(() => {
+    try {
+      return localStorage.getItem("syncpl_selected_mic_id") || "";
+    } catch {
+      return "";
+    }
+  });
   const [isTestingMic, setIsTestingMic] = useState(false);
   const [dbLevel, setDbLevel] = useState(0);
+
+  const handleSelectMic = (micId: string) => {
+    setSelectedMicId(micId);
+    try {
+      localStorage.setItem("syncpl_selected_mic_id", micId);
+      window.dispatchEvent(new Event("storage"));
+    } catch (err) {
+      console.warn("Failed saving mic ID", err);
+    }
+  };
 
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const animationRef = useRef<number | null>(null);
@@ -993,12 +1009,19 @@ export default function SettingsView({
             </p>
 
             <div>
-              <label className="block text-[10px] font-bold text-[#8E9297] uppercase mb-1.5 tracking-wider">
-                Select Audio Input Device
-              </label>
+              <div className="flex justify-between items-center mb-1.5">
+                <label className="block text-[10px] font-bold text-[#8E9297] uppercase tracking-wider">
+                  Select Audio Input Device
+                </label>
+                {selectedMicId && (
+                  <span className="text-[10px] font-semibold text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-2 py-0.5 rounded">
+                    Hardware Saved
+                  </span>
+                )}
+              </div>
               <select
                 value={selectedMicId}
-                onChange={(e) => setSelectedMicId(e.target.value)}
+                onChange={(e) => handleSelectMic(e.target.value)}
                 className="w-full bg-[#121417] border border-[#2A2D31] text-sm rounded px-3 py-2.5 focus:outline-none focus:ring-1 focus:ring-[#5865F2] text-white font-medium"
               >
                 <option value="">Default Microphone</option>

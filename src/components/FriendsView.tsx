@@ -280,20 +280,22 @@ export default function FriendsView({
         return;
       }
 
-      // Find user in /users collection
+      // Find user in /users collection (case-insensitively)
       const usersCol = collection(db, "users");
-      const q = query(usersCol, where("username", "==", cleanUsername));
-      const querySnap = await getDocs(q);
+      const querySnap = await getDocs(usersCol);
+      const matchedDoc = querySnap.docs.find(d => {
+        const u = d.data();
+        return u.username && u.username.toLowerCase() === cleanUsername.toLowerCase();
+      });
 
-      if (querySnap.empty) {
+      if (!matchedDoc) {
         triggerToast("Trader Not Found", `Could not locate active node with username "${cleanUsername}".`, "error");
         setIsSearching(false);
         return;
       }
 
-      const targetDoc = querySnap.docs[0];
-      const targetUser = targetDoc.data();
-      const targetUid = targetDoc.id;
+      const targetUser = matchedDoc.data();
+      const targetUid = matchedDoc.id;
 
       // Add a pending friendship document
       const friendshipId = `friend_${currentUser.uid}_${targetUid}`;

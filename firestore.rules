@@ -36,6 +36,11 @@ service cloud.firestore {
       allow read, write: if isSignedIn();
     }
 
+    // Voice Signals (WebRTC signaling)
+    match /voice_signals/{signalId} {
+      allow read, write: if isSignedIn();
+    }
+
     // P&L Logs
     match /pnl_logs/{logId} {
       allow read, create: if isSignedIn();

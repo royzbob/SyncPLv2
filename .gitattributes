@@ -1,0 +1,12 @@
+# Handle line endings automatically for text files
+* text=auto eol=lf
+
+# Force Git to treat all image and icon files strictly as binary.
+# This prevents line-ending normalization (converting LF to CRLF)
+# which corrupts binary signatures on Windows and causes tauri builds to fail.
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.icns binary

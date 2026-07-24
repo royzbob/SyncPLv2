@@ -51,6 +51,7 @@ import { auth, db } from "./lib/firebase";
 import { Room, Channel, VoiceUser, UserProfile, PnlLog, ChatMessage, LiveTrade, TradingRule } from "./types";
 import { generateRandomRoomCode, initialTickers, TickerInfo, formatCurrency, getLocalDateString, getLocalTimeString } from "./utils/helpers";
 import { playJoinSound, playLeaveSound } from "./utils/audio";
+import { WebRtcVoiceManager } from "./lib/webrtcVoice";
 
 const isMobileOrTablet = typeof window !== "undefined" && (/Mobi|Android|iPhone|iPad/i.test(navigator.userAgent) || window.innerWidth < 1024);
 
@@ -185,6 +186,27 @@ export default function App() {
       return {};
     }
   });
+
+  const [selectedMicId, setSelectedMicId] = useState<string>(() => {
+    try {
+      return localStorage.getItem("syncpl_selected_mic_id") || "";
+    } catch {
+      return "";
+    }
+  });
+
+  useEffect(() => {
+    const handleStorage = () => {
+      try {
+        const stored = localStorage.getItem("syncpl_selected_mic_id") || "";
+        setSelectedMicId(stored);
+      } catch (e) {
+        console.warn(e);
+      }
+    };
+    window.addEventListener("storage", handleStorage);
+    return () => window.removeEventListener("storage", handleStorage);
+  }, []);
 
   const handleToggleMuteUser = (userId: string) => {
     setMutedUsers((prev) => {
@@ -347,6 +369,85 @@ export default function App() {
       }
     };
   }, [currentUser, activeVoiceChannel, isMuted]);
+
+  // WebRTC Real-Time Voice Audio Mesh Connection
+  const webrtcVoiceRef = useRef<WebRtcVoiceManager | null>(null);
+
+  useEffect(() => {
+    if (!currentUser || !activeVoiceChannel || !activeRoom) {
+      if (webrtcVoiceRef.current) {
+        webrtcVoiceRef.current.destroy();
+        webrtcVoiceRef.current = null;
+      }
+      return;
+    }
+
+    // Skip WebRTC peer mesh for synthetic AI bot channels
+    const isAi = activeVoiceChannel.includes("🤖") || activeVoiceChannel.toLowerCase().includes("ai");
+    if (isAi) {
+      if (webrtcVoiceRef.current) {
+        webrtcVoiceRef.current.destroy();
+        webrtcVoiceRef.current = null;
+      }
+      return;
+    }
+
+    const mutedUsersList = Array.isArray(mutedUsers)
+      ? mutedUsers
+      : Object.keys(mutedUsers || {}).filter((k) => mutedUsers[k]);
+
+    const manager = new WebRtcVoiceManager({
+      myUid: currentUser.uid,
+      groupId: activeRoom.id,
+      channelName: activeVoiceChannel,
+      selectedMicId,
+      isMuted,
+      isDeafened,
+      isMutedAll,
+      globalVolume,
+      inputVolume,
+      mutedUsers: mutedUsersList,
+      userVolumes,
+      onError: (err) => {
+        console.warn("WebRTC voice initialization notice:", err);
+      },
+    });
+
+    webrtcVoiceRef.current = manager;
+    manager.start();
+
+    return () => {
+      manager.destroy();
+      if (webrtcVoiceRef.current === manager) {
+        webrtcVoiceRef.current = null;
+      }
+    };
+  }, [currentUser?.uid, activeVoiceChannel, activeRoom?.id]);
+
+  // Update WebRTC voice manager when local mute or audio controls change
+  useEffect(() => {
+    if (webrtcVoiceRef.current) {
+      webrtcVoiceRef.current.setMuted(isMuted);
+    }
+  }, [isMuted]);
+
+  useEffect(() => {
+    if (webrtcVoiceRef.current) {
+      const mutedUsersList = Array.isArray(mutedUsers)
+        ? mutedUsers
+        : Object.keys(mutedUsers || {}).filter((k) => mutedUsers[k]);
+
+      webrtcVoiceRef.current.updateAudioSettings(
+        isDeafened,
+        isMutedAll,
+        globalVolume,
+        mutedUsersList,
+        userVolumes,
+        inputVolume,
+        selectedMicId
+      );
+    }
+  }, [isDeafened, isMutedAll, globalVolume, inputVolume, mutedUsers, userVolumes, selectedMicId]);
 
   // Stripe & Subscription state
   const getApiUrl = (path: string): string => {
@@ -846,6 +947,29 @@ export default function App() {
     });
     return () => unsubscribe();
   }, [currentUser?.uid]);
+
+  // Sync public user profile to users collection whenever local profile updates
+  useEffect(() => {
+    if (!currentUser || !profile) return;
+    const syncPublicUserDoc = async () => {
+      try {
+        const publicRef = doc(db, "users", currentUser.uid);
+        await setDoc(publicRef, {
+          uid: currentUser.uid,
+          username: profile.username || "Trader",
+          avatarColor: profile.avatarColor || "indigo",
+          avatarType: profile.avatarType || "emoji",
+          avatarVal: profile.avatarVal || "🐂",
+          subscriptionTier: (profile.subscriptionStatus === "active" || profile.subscriptionStatus === "trialing" || profile.subscriptionTier === "premium") ? "premium" : "free",
+          activeGroupId: profile.activeGroupId || "",
+          updatedAt: new Date().toISOString()
+        }, { merge: true });
+      } catch (err) {
+        console.error("Failed to sync public user doc in App.tsx:", err);
+      }
+    };
+    syncPublicUserDoc();
+  }, [currentUser?.uid, profile]);
 
   const fetchJoinedRooms = async (groupIds: string[], activeGroupId: string) => {
     try {

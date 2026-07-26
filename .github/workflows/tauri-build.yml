@@ -79,6 +79,7 @@ jobs:
           releaseBody: 'See the assets below to download the latest version for macOS and Windows.'
           releaseDraft: false
           prerelease: false
+          includeUpdaterJson: true
           projectPath: ${{ steps.detect.outputs.project_path }}
           tauriScript: 'npm run tauri'
           args: ${{ matrix.args }}

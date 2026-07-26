@@ -80,4 +80,5 @@ jobs:
           releaseDraft: false
           prerelease: false
           projectPath: ${{ steps.detect.outputs.project_path }}
+          tauriScript: 'npm run tauri'
           args: ${{ matrix.args }}

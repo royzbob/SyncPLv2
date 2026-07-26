@@ -122,7 +122,7 @@ export default function UpdateNotifier() {
           <div className="flex justify-between items-center px-4 py-3 bg-neutral-950/40 border border-neutral-800/60 rounded-xl">
             <div>
               <span className="block text-[10px] uppercase tracking-wider text-neutral-500">Current</span>
-              <span className="text-sm font-semibold text-neutral-400">1.0.4</span>
+              <span className="text-sm font-semibold text-neutral-400">1.0.6</span>
             </div>
             <div className="h-6 w-[1px] bg-neutral-800"></div>
             <div className="text-right">
